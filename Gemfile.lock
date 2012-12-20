@@ -1,0 +1,14 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    flacinfo-rb (0.4)
+    taglib-ruby (0.5.2)
+    tokyocabinet (1.29)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  flacinfo-rb
+  taglib-ruby
+  tokyocabinet

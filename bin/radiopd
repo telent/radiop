@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+
+$:.push(File.join(File.dirname(__FILE__),'..','lib'))
+require 'radiop'
+
+# TODO
+# DONE 1) mp3 tagger
+# 2) methods on Collection to do searches
+# 3) answer http requests for 
+# - opensearch forms
+# - search result
+# - audio data
+# 4) content neg
+# 5) rack::cache
+# 6) store dupes and empties somewhere persistent so we don't have to do a 
+#  full scan each time to find them
+
+
+c=Radiop::Collection.new(:directory=> ARGV[0] || '/big/media/Music/')
+# c.update
+warn c.search(title: 'Mr').map {|t| t['location'] }
+warn [:duplicates,c.duplicates.values.count]
+warn [:empty, c.empties.count]
