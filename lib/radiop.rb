@@ -3,5 +3,6 @@ module Radiop
 end
 
 require 'radiop/track'
+require 'radiop/server'
 require 'radiop/collection'
 

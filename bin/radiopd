@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-$:.push(File.join(File.dirname(__FILE__),'..','lib'))
 require 'radiop'
 
 # TODO
@@ -17,7 +16,11 @@ require 'radiop'
 
 
 c=Radiop::Collection.new(:directory=> ARGV[0] || '/big/media/Music/')
+s=Radiop::Server
+
 # c.update
 warn c.search(title: 'Mr').map {|t| t['location'] }
 warn [:duplicates,c.duplicates.values.count]
 warn [:empty, c.empties.count]
+
+s.run!
