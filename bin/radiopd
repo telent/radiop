@@ -16,13 +16,10 @@ require 'radiop'
 
 
 c=Radiop::Collection.new(:directory=> ARGV[0] || '/big/media/Music/')
-s=Radiop::Server
-
-class s
-  def collection
-    c
-  end
+s=Sinatra.new(Radiop::Server) do
+  set :collection, c
 end
+
 
 # c.update
 warn c.search(title: 'Mr').map {|t| t['location'] }

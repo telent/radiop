@@ -3,7 +3,7 @@ require 'tokyocabinet'
 
 class Radiop::Collection
   IGNORE_FILES=%w(mood m3u)
-  attr_reader :duplicates, :empties
+  attr_reader :duplicates, :empties, :directory
   def initialize(args)
     @directory=args[:directory] or raise "Required argument :directory missing"
     @database_name=args[:database_name] || File.join(@directory,"radiatorbase.tdb")
