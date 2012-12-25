@@ -6,5 +6,5 @@ class Radiop::Server < Sinatra::Application
   get "/" do
     content_type "application/opensearchdescription+xml"
     builder :search_form
-  end  
+  end
 end

@@ -1,7 +1,9 @@
 require 'minitest/spec'
 require 'minitest/autorun'
+require 'minitest/mock'
 require 'rack/test'
 require 'radiop/server'
+require 'nokogiri'
 
 include Rack::Test::Methods
 
@@ -21,5 +23,11 @@ describe "/" do
 
   it "is XML" do
     @r.body.must_match /^<\?xml version="1.0" encoding="UTF-8"\?>/
+  end
+
+  it "has a description" do
+    n = Nokogiri::XML(@r.body)
+    desc = n.css('OpenSearchDescription Description').first.child.text
+    desc.must_match "RADIOP server"
   end
 end
