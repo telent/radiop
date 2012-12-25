@@ -4,6 +4,8 @@ require 'minitest/mock'
 require 'rack/test'
 require 'radiop/server'
 require 'nokogiri'
+require 'uri'
+require 'set'
 
 include Rack::Test::Methods
 
@@ -36,5 +38,15 @@ describe "/" do
     desc = n.css('OpenSearchDescription Description').first.child.text
     desc.must_match "RADIOP server"
     desc.must_match Collection.directory
+  end
+
+  it "links to search URL" do
+    n = Nokogiri::XML(@r.body)
+    template = n.css('OpenSearchDescription Url').find {|n|
+      n[:type] == "application/xspf+xml"
+    }[:template]
+    template.must_match %r{\A/search\?}
+    params = template.scan(/\?(.+)\Z/).first.first.split(/&amp;/)
+    Set.new(params).must_equal Set.new(["creator={creator}", "album={album}", "title={title}", "year={year}", "format=xspf"])
   end
 end
