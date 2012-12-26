@@ -1,6 +1,7 @@
+require 'minitest/unit'
 require 'minitest/spec'
+require 'mocha/setup'
 require 'minitest/autorun'
-require 'minitest/mock'
 require 'rack/test'
 require 'radiop/server'
 require 'nokogiri'
@@ -48,5 +49,33 @@ describe "/" do
     template.must_match %r{\A/search\?}
     params = template.scan(/\?(.+)\Z/).first.first.split(/&amp;/)
     Set.new(params).must_equal Set.new(["creator={creator}", "album={album}", "title={title}", "year={year}", "format=xspf"])
+  end
+end
+
+describe '/search' do
+  before :each do
+    @coll ||= mock('collection')
+    coll = @coll
+    @app ||= Sinatra.new(Radiop::Server) do
+      set :collection, coll
+    end
+  end
+  def app
+    @app
+  end
+
+  it "performs a search" do
+    discs = [
+             OpenStruct.new(creator: 'hello', album: '1', title: 'track 1'),
+             OpenStruct.new(creator: 'hello', album: 'Hits', title: 'B side'),
+             OpenStruct.new(creator: 'hello', album: 'Eponymous', title: 'welcome to the jungle'),
+            ]
+    discs.each_with_index do |d,i| d.location="/data/#{i}" end
+    @coll.expects(:search).returns(discs)
+    get '/search?creator=hello'
+    r = last_response
+    r.must_be :ok?
+    n = Nokogiri::XML(r.body)
+    n.root.name.must_equal 'playlist'
   end
 end

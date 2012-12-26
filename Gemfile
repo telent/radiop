@@ -7,6 +7,7 @@ gem "sinatra"
 group :development,:test do
   gem "rack-test"
   gem "minitest"
+  gem "mocha", require: false
 end
 gem 'builder'
 gem 'puma'
