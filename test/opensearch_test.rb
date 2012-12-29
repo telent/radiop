@@ -59,23 +59,25 @@ describe '/search' do
     @app ||= Sinatra.new(Radiop::Server) do
       set :collection, coll
     end
+    @discs = [
+              OpenStruct.new(creator: 'hello', album: '1', title: 'track 1'),
+              OpenStruct.new(creator: 'hello', album: 'Hits', title: 'B side'),
+              OpenStruct.new(creator: 'hello', album: 'Eponymous', title: 'welcome to the jungle'),
+            ]
+    @discs.each_with_index do |d,i| d.location="/data/#{i}" end
+    @coll.expects(:search).returns(@discs)
+    get '/search?creator=hello'
+    @r = last_response
   end
   def app
     @app
   end
 
-  it "performs a search" do
-    discs = [
-             OpenStruct.new(creator: 'hello', album: '1', title: 'track 1'),
-             OpenStruct.new(creator: 'hello', album: 'Hits', title: 'B side'),
-             OpenStruct.new(creator: 'hello', album: 'Eponymous', title: 'welcome to the jungle'),
-            ]
-    discs.each_with_index do |d,i| d.location="/data/#{i}" end
-    @coll.expects(:search).returns(discs)
-    get '/search?creator=hello'
-    r = last_response
-    r.must_be :ok?
-    n = Nokogiri::XML(r.body)
+  it "is ok" do    
+    @r.must_be :ok?
+  end
+  it "is a playlist" do
+    n = Nokogiri::XML(@r.body)
     n.root.name.must_equal 'playlist'
   end
 end
