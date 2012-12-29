@@ -80,4 +80,8 @@ describe '/search' do
     n = Nokogiri::XML(@r.body)
     n.root.name.must_equal 'playlist'
   end
+  it "contains track elements" do
+    n = Nokogiri::XML(@r.body)
+    n.css('trackList track').count.must_equal 3
+  end
 end
