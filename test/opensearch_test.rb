@@ -83,5 +83,6 @@ describe '/search' do
   it "contains track elements" do
     n = Nokogiri::XML(@r.body)
     n.css('trackList track').count.must_equal 3
+    n.css('trackList track location').count.must_equal 3
   end
 end
