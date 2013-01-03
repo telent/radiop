@@ -79,31 +79,34 @@ class Radiop::Collection
       end
     end
   end
-
+  
   def search(attributes)
     with_database do |db|
       q = TokyoCabinet::TDBQRY::new(db)
       attributes.keys.each do |a|
-        v=attributes[a]
-        case k=a.to_s
-        when 'artist','album','title' then
-          q.addcond(k, TokyoCabinet::TDBQRY::QCSTRBW, v)
-        when 'attributes' then
-          q.addcond(k, TokyoCabinet::TDBQRY::QCSTRAND ,v)
-        when 'year' then
-          min,max = attributes[k].split /( +|\.\.|,|-)/
-          if min && max
-            q.addcond(a, TokyoCabinet::TDBQRY::QCNUMBT, [min,max].join(' '))
-          elsif min
-            q.addcond(a, TokyoCabinet::TDBQRY::QCNUMEQ, min)
-          end
-        end
-        # qry.setorder("track_number", TokyoCabinet::TDBQRY::QOSTRDESC)
-        # qry.setlimit(10)
-        res = q.search
+        v = attributes[a]
         ret = []
-        res.each do |rkey|
-          ret << db.get(rkey)
+        if v
+          case k=a.to_s
+          when 'artist','album','title' then
+            q.addcond(k, TokyoCabinet::TDBQRY::QCSTRBW, v)
+          when 'attributes' then
+            q.addcond(k, TokyoCabinet::TDBQRY::QCSTRAND ,v)
+          when 'year' then
+            min,max = attributes[k].split /( +|\.\.|,|-)/
+            if min && max
+              q.addcond(a, TokyoCabinet::TDBQRY::QCNUMBT, [min,max].join(' '))
+            elsif min
+              q.addcond(a, TokyoCabinet::TDBQRY::QCNUMEQ, min)
+            end
+          end
+
+          # qry.setorder("track_number", TokyoCabinet::TDBQRY::QOSTRDESC)
+          # qry.setlimit(10)
+          res = q.search
+          res.each do |rkey|
+            ret << db.get(rkey)
+          end
         end
         return ret
       end
